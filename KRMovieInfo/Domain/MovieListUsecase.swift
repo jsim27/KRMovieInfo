@@ -10,5 +10,4 @@ import RxSwift
 
 class MovieListUsecase {
 
-    
 }

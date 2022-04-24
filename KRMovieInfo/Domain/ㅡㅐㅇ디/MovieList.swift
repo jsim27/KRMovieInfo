@@ -64,6 +64,6 @@ enum ProductionState: String, Decodable {
 }
 
 enum MovieType: String, Decodable {
-    case 옴니버스 = "옴니버스"
-    case 장편 = "장편"
+    case omnibus = "옴니버스"
+    case fullLength = "장편"
 }
