@@ -7,7 +7,7 @@
 
 import XCTest
 import RxTest
-import RxSwift
+import RxNimble
 
 class KRMovieInfoTests: XCTestCase {
 
