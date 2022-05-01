@@ -23,7 +23,7 @@ extension APIRequest {
         return urlComponents?.url
     }
 
-    var request: URLRequest? {
+    var urlRequest: URLRequest? {
         guard let url = url else {
             return nil
         }
