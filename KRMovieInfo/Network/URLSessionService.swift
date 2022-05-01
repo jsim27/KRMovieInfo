@@ -9,8 +9,6 @@ import Foundation
 
 final class URLSessionService {
     let session = URLSession.shared
-}
 
-struct MovieListRequest {
-    let base = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json"
+    
 }

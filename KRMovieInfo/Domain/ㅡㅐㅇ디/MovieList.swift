@@ -7,21 +7,15 @@
 
 import Foundation
 
-// MARK: - MovieListResult
-struct MovieListResult: Decodable {
-    let totalCount: Int
-    let movieList: [MovieList]
-}
-
 // MARK: - MovieList
-struct MovieList: Decodable {
+struct MovieListItemDomain: Decodable {
     let title, titleEn, prductionYear: String
     let openDate: String
-    let movieType: MovieType
-    let productionState: ProductionState
+    let movieType: String
+    let productionState: String
     let nationAll, genreAll, representingNation, representingGenre: String
-    let directors: [Director]
-    let companys: [Company]
+    let directors: [String]
+    let companys: [String]
 
     enum CodingKeys: String, CodingKey {
         case title = "movieNm"
@@ -37,33 +31,4 @@ struct MovieList: Decodable {
         case directors = "directors"
         case companys = "companys"
     }
-}
-
-// MARK: - Company
-struct Company: Decodable {
-    let companyName: String
-
-    enum CodingKeys: String, CodingKey {
-        case companyName = "companyNm"
-    }
-}
-
-// MARK: - Director
-struct Director: Decodable {
-    let name: String
-
-    enum CodingKeys: String, CodingKey {
-        case name = "peopleNm"
-    }
-}
-
-enum ProductionState: String, Decodable {
-    case release = "개봉"
-    case preRelease = "개봉예정"
-    case other = "기타"
-}
-
-enum MovieType: String, Decodable {
-    case omnibus = "옴니버스"
-    case fullLength = "장편"
 }
