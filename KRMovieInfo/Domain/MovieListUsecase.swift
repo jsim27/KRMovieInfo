@@ -9,5 +9,18 @@ import Foundation
 import RxSwift
 
 class MovieListUsecase {
+    let repository: MovieListRepository
+
+    init(movieListRepository: MovieListRepository) {
+        self.repository = movieListRepository
+    }
+
+    func fetchMovieList(title: String) -> Observable<MovieList> {
+        return repository.fetchMovieList(director: director)
+    }
     
+    func fetchMovieList(director: String) -> Observable<MovieList> {
+        return repository.fetchMovieList(director: director)
+    }
+
 }

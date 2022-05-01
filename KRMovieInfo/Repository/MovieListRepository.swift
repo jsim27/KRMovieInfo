@@ -9,5 +9,8 @@ import Foundation
 import RxSwift
 
 protocol MovieListRepository {
-    func fetch(_ title: String) -> Observable<MovieList>
+    
+    func fetch(title: String) -> Observable<MovieList>
+    
+    func fetch(director: String) -> Observable<MovieList>
 }
