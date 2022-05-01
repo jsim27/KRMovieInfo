@@ -8,12 +8,14 @@
 import Foundation
 
 struct MovieListResponse: APIResponse, Decodable {
+
     let totalCount: Int
     let movieList: [MovieList]
 }
 
 // MARK: - MovieList
 struct MovieList: Decodable {
+
     let title, titleEn, prductionYear: String
     let openDate: String
     let movieType: MovieType
@@ -40,6 +42,7 @@ struct MovieList: Decodable {
 
 // MARK: - Company
 struct Company: Decodable {
+
     let companyName: String
 
     enum CodingKeys: String, CodingKey {
@@ -49,6 +52,7 @@ struct Company: Decodable {
 
 // MARK: - Director
 struct Director: Decodable {
+
     let name: String
 
     enum CodingKeys: String, CodingKey {

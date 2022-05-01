@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 
 class MovieListUsecase {
+
     let repository: MovieListRepository
 
     init(movieListRepository: MovieListRepository) {
@@ -18,7 +19,7 @@ class MovieListUsecase {
     func fetchMovieList(title: String) -> Observable<[MovieListItemDomain]> {
         return repository.fetchMovieList(director: title)
     }
-    
+
     func fetchMovieList(director: String) -> Observable<[MovieListItemDomain]> {
         return repository.fetchMovieList(director: director)
     }

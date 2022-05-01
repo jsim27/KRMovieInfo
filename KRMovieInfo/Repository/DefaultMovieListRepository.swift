@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 
 class DefaultMovieListRepository: MovieListRepository {
+
     let service = URLSessionService()
 
     func fetchMovieList(title: String) -> Observable<[MovieListItemDomain]> {
@@ -27,6 +28,7 @@ class DefaultMovieListRepository: MovieListRepository {
 }
 
 private extension MovieListResponse {
+
     func toDomain() -> [MovieListItemDomain] {
         return self.movieList.map {
             return MovieListItemDomain(

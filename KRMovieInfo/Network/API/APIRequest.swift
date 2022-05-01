@@ -17,6 +17,7 @@ protocol APIRequest {
 }
 
 extension APIRequest {
+
     var url: URL? {
         var urlComponents = URLComponents(string: self.base)
         urlComponents?.queryItems = self.query.map { URLQueryItem(name: $0.key, value: "\($0.value)") }

@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 
 final class URLSessionService {
+
     let session = URLSession.shared
 
     func execute<T: APIRequest>(request: T, completion: @escaping (Result<T.APIResponse, NetworkError>) -> Void) {
