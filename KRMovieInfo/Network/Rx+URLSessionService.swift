@@ -8,14 +8,15 @@
 import Foundation
 import RxSwift
 
-extension Reactive where Base: URLSessionService {
+extension URLSessionService {
+
     func execute<T: APIRequest>(request: T) -> Observable<T.APIResponse> {
         return Observable.create { emitter in
             guard let request = request.urlRequest else {
                 emitter.onError(NetworkError.invalidRequest)
                 return Disposables.create()
             }
-            let task = self.base.session
+            let task = self.session
                 .dataTask(with: request) { data, response, error in
                     guard error == nil else {
                         emitter.onError(NetworkError.error(error))
@@ -46,10 +47,10 @@ extension Reactive where Base: URLSessionService {
                     emitter.onCompleted()
                 }
             task.resume()
+
             return Disposables.create {
                 task.cancel()
             }
         }
-
     }
 }

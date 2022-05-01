@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 final class URLSessionService {
     let session = URLSession.shared

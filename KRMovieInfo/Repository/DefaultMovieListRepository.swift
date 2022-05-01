@@ -9,21 +9,25 @@ import Foundation
 import RxSwift
 
 class DefaultMovieListRepository: MovieListRepository {
-
     let service = URLSessionService()
-    
-    func fetchMovieList(title: String) -> Observable<[MovieListItemDomain]> {
 
+    func fetchMovieList(title: String) -> Observable<[MovieListItemDomain]> {
+        let request = MovieListRequest(query: ["movieNm": title])
+        let response = service.execute(request: request)
+
+        return response.map { $0.toDomain() }
     }
 
     func fetchMovieList(director: String) -> Observable<[MovieListItemDomain]> {
+        let request = MovieListRequest(query: ["directorNm": director])
+        let response = service.execute(request: request)
 
+        return response.map { $0.toDomain() }
     }
-
 }
 
-extension MovieListResponse {
-    private func toDomain() -> [MovieListItemDomain] {
+private extension MovieListResponse {
+    func toDomain() -> [MovieListItemDomain] {
         return self.movieList.map {
             return MovieListItemDomain(
                 title: $0.title,
