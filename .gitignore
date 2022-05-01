@@ -2,7 +2,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/swift,xcode,macos,swiftpackagemanager
 # Edit at https://www.toptal.com/developers/gitignore?templates=swift,xcode,macos,swiftpackagemanager
 
-Info.plist
 
 ### macOS ###
 # General
@@ -138,6 +137,9 @@ xcuserdata
 !*.xcworkspace/contents.xcworkspacedata
 /*.gcno
 **/xcshareddata/WorkspaceSettings.xcsettings
+
+KRMovieInfo/Info.plist
+
 
 # End of https://www.toptal.com/developers/gitignore/api/swift,xcode,macos,swiftpackagemanager
 
