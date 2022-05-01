@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>KOFIC_API_KEY1</key>
+	<string>영화진흥위원회 API KEY 1를 입력해주세요</string>
+	<key>KOFIC_API_KEY2</key>
+	<string>영화진흥위원회 API KEY 2를 입력해주세요</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
