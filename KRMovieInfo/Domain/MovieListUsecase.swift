@@ -16,11 +16,11 @@ class MovieListUsecase {
         self.repository = movieListRepository
     }
 
-    func fetchMovieList(title: String) -> Observable<[MovieListItemDomain]> {
+    func fetchMovieList(title: String) -> Observable<[MovieListItem]> {
         return repository.fetchMovieList(director: title)
     }
 
-    func fetchMovieList(director: String) -> Observable<[MovieListItemDomain]> {
+    func fetchMovieList(director: String) -> Observable<[MovieListItem]> {
         return repository.fetchMovieList(director: director)
     }
 

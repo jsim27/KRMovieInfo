@@ -7,11 +7,21 @@
 
 import Foundation
 
-struct MovieListRequest: APIRequest {
-
+struct MovieListRequest: APIRequest, MovieAPIInfoOwner {
     typealias APIResponse = MovieListResponse
 
-    let base = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json"
     var method: HTTPMethod = .GET
     let query: [String: Any]
+}
+
+protocol MovieAPIInfoOwner: APIRequest {
+
+    var base: String { get }
+    var apiKey: String { get }
+}
+
+extension MovieAPIInfoOwner {
+
+    var base: String { "http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json" }
+    var apiKey: String { Bundle.main.koficMainAPIKey }
 }

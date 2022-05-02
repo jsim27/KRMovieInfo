@@ -12,6 +12,7 @@ protocol APIRequest {
     associatedtype APIResponse: Decodable
 
     var base: String { get }
+    var apiKey: String { get }
     var method: HTTPMethod { get }
     var query: [String: Any] { get }
 }
@@ -21,6 +22,7 @@ extension APIRequest {
     var url: URL? {
         var urlComponents = URLComponents(string: self.base)
         urlComponents?.queryItems = self.query.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
+        urlComponents?.queryItems?.append(URLQueryItem(name: "key", value: self.apiKey))
         return urlComponents?.url
     }
 
@@ -34,6 +36,11 @@ extension APIRequest {
 
         return request
     }
+}
+
+enum APIKeyPriority {
+    case main
+    case sub
 }
 
 enum HTTPMethod: String {
