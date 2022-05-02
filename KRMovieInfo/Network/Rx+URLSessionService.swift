@@ -12,44 +12,18 @@ extension URLSessionService {
 
     func execute<T: APIRequest>(request: T) -> Observable<T.APIResponse> {
         return Observable.create { emitter in
-            guard let request = request.urlRequest else {
-                emitter.onError(NetworkError.invalidRequest)
-                return Disposables.create()
-            }
-            let task = self.session
-                .dataTask(with: request) { data, response, error in
-                    guard error == nil else {
-                        emitter.onError(NetworkError.error(error))
-                        return
-                    }
-
-                    guard let httpResponse = response as? HTTPURLResponse else {
-                        emitter.onError(NetworkError.invalidResponse)
-                        return
-                    }
-
-                    guard (200...299) ~= httpResponse.statusCode else {
-                        emitter.onError(NetworkError.statusError(code: httpResponse.statusCode))
-                        return
-                    }
-
-                    guard let data = data else {
-                        emitter.onError(NetworkError.invalidData)
-                        return
-                    }
-
-                    guard let parsed = try? JSONDecoder().decode(T.APIResponse.self, from: data) else {
-                        emitter.onError(NetworkError.parsingFailed)
-                        return
-                    }
-
-                    emitter.onNext(parsed)
+            let task = self.execute(request: request) { result in
+                switch result {
+                case .success(let result):
+                    emitter.onNext(result)
                     emitter.onCompleted()
+                case .failure(let error):
+                    emitter.onError(error)
                 }
-            task.resume()
+            }
 
             return Disposables.create {
-                task.cancel()
+                task?.cancel()
             }
         }
     }

@@ -12,13 +12,17 @@ final class URLSessionService {
 
     let session = URLSession.shared
 
-    func execute<T: APIRequest>(request: T, completion: @escaping (Result<T.APIResponse, NetworkError>) -> Void) {
+    func execute<T: APIRequest>(
+        request: T,
+        completion: @escaping (Result<T.APIResponse, NetworkError>) -> Void
+    ) -> URLSessionDataTask? {
+
         guard let request = request.urlRequest else {
             completion(.failure(.invalidRequest))
-            return
+            return nil
         }
 
-        self.session
+        let task = self.session
             .dataTask(with: request) { data, response, error in
                 guard error == nil else {
                     completion(.failure(.error(error)))
@@ -47,8 +51,10 @@ final class URLSessionService {
 
                 completion(.success(parsed))
             }
-            .resume()
-        }
+        task.resume()
+
+        return task
+    }
 }
 
 enum NetworkError: Error {
