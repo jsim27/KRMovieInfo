@@ -14,15 +14,20 @@ protocol APIRequest {
     var base: String { get }
     var apiKey: String { get }
     var method: HTTPMethod { get }
-    var query: [String: Any] { get }
+    var query: [String: String] { get }
 }
 
 extension APIRequest {
 
     var url: URL? {
         var urlComponents = URLComponents(string: self.base)
-        urlComponents?.queryItems = self.query.map { URLQueryItem(name: $0.key, value: "\($0.value)") }
-        urlComponents?.queryItems?.append(URLQueryItem(name: "key", value: self.apiKey))
+        urlComponents?.percentEncodedQueryItems = self.query.map {
+            URLQueryItem(
+                name: $0.key,
+                value: $0.value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+            )
+        }
+        urlComponents?.percentEncodedQueryItems?.append(URLQueryItem(name: "key", value: self.apiKey))
         return urlComponents?.url
     }
 

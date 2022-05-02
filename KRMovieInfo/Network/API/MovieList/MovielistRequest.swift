@@ -8,10 +8,11 @@
 import Foundation
 
 struct MovieListRequest: APIRequest, MovieAPIInfoOwner {
+
     typealias APIResponse = MovieListResponse
 
     var method: HTTPMethod = .GET
-    let query: [String: Any]
+    let query: [String: String]
 }
 
 protocol MovieAPIInfoOwner: APIRequest {
@@ -22,6 +23,8 @@ protocol MovieAPIInfoOwner: APIRequest {
 
 extension MovieAPIInfoOwner {
 
-    var base: String { "http://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json" }
+    var base: String {
+        return "https://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json"
+    }
     var apiKey: String { Bundle.main.koficMainAPIKey }
 }

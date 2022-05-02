@@ -20,7 +20,10 @@ class DefaultMovieListRepository: MovieListRepository {
     }
 
     func fetchMovieList(director: String) -> Observable<[MovieListItem]> {
-        let request = MovieListRequest(query: ["directorNm": director])
+
+        let request = MovieListRequest(
+            query: ["directorNm": director]
+        )
         let response = service.execute(request: request)
 
         return response.map { $0.toDomain() }
@@ -30,14 +33,14 @@ class DefaultMovieListRepository: MovieListRepository {
 private extension MovieListResponse {
 
     func toDomain() -> [MovieListItem] {
-        return self.movieList.map {
+        return self.movieListResult.movieList.map {
             return MovieListItem(
                 title: $0.title,
                 titleEn: $0.titleEn,
                 prductionYear: $0.prductionYear,
                 openDate: $0.openDate,
-                movieType: $0.movieType.rawValue,
-                productionState: $0.productionState.rawValue,
+                movieType: $0.movieType,
+                productionState: $0.productionState,
                 nationAll: $0.nationAll,
                 genreAll: $0.genreAll,
                 representingNation: $0.representingNation,
