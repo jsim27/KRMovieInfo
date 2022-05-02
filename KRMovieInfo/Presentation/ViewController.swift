@@ -13,9 +13,5 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        MovieListUsecase(movieListRepository: DefaultMovieListRepository()).fetchMovieList(director: "봉준호")
-            .subscribe { event in
-                print(event)
-            }
     }
 }
