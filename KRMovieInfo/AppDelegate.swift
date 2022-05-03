@@ -16,7 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let root = MainTabBarController()
         let navigationController = UINavigationController(rootViewController: root)
 
-        let movieSearchViewController = UIViewController()
+        let movieSearchViewController = MovieSearchViewController()
+        let movieSearchViewModel = MovieSearchViewModel()
+        movieSearchViewController.setViewModel(movieSearchViewModel)
         root.setViewControllers([movieSearchViewController], animated: false)
 
         window.rootViewController = navigationController
