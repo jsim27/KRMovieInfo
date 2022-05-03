@@ -10,7 +10,7 @@ import RxSwift
 
 extension URLSessionService {
 
-    func execute<T: APIRequest>(request: T) -> Observable<T.APIResponse> {
+    func execute<T: APIRequest>(request: T) -> Observable<T.Response> {
         return Observable.create { emitter in
             let task = self.execute(request: request) { result in
                 switch result {

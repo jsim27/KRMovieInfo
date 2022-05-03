@@ -7,4 +7,4 @@
 
 import Foundation
 
-protocol APIResponse { }
+protocol APIResponse: Decodable { }

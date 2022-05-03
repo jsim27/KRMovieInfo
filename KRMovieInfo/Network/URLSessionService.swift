@@ -14,7 +14,7 @@ final class URLSessionService {
 
     func execute<T: APIRequest>(
         request: T,
-        completion: @escaping (Result<T.APIResponse, NetworkError>) -> Void
+        completion: @escaping (Result<T.Response, NetworkError>) -> Void
     ) -> URLSessionDataTask? {
 
         guard let request = request.urlRequest else {
@@ -44,7 +44,7 @@ final class URLSessionService {
                     return
                 }
 
-                guard let parsed = try? JSONDecoder().decode(T.APIResponse.self, from: data) else {
+                guard let parsed = try? JSONDecoder().decode(T.Response.self, from: data) else {
                     completion(.failure(.parsingFailed))
                     return
                 }

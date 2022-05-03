@@ -9,7 +9,7 @@ import Foundation
 
 struct MovieListRequest: APIRequest, MovieAPIInfoOwner {
 
-    typealias APIResponse = MovieListResponse
+    typealias Response = MovieListResponse
 
     var method: HTTPMethod = .GET
     let query: [String: String]

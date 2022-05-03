@@ -9,7 +9,7 @@ import Foundation
 
 protocol APIRequest {
 
-    associatedtype APIResponse: Decodable
+    associatedtype Response: APIResponse
 
     var base: String { get }
     var apiKey: String { get }
