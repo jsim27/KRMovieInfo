@@ -10,14 +10,18 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         let window = UIWindow(frame: UIScreen.main.bounds)
-        window.makeKeyAndVisible()
-        window.rootViewController = ViewController()
+        let root = MainTabBarController()
+        let navigationController = UINavigationController(rootViewController: root)
 
+        let movieSearchViewController = UIViewController()
+        root.setViewControllers([movieSearchViewController], animated: false)
+
+        window.rootViewController = navigationController
+        window.makeKeyAndVisible()
+        
         return true
     }
 
