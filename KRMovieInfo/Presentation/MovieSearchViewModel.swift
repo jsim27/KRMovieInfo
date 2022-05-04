@@ -17,6 +17,6 @@ class MovieSearchViewModel: ViewModelProtocol {
     }
 
     func transform(input: Input) -> Output {
-
+        return Output()
     }
 }
