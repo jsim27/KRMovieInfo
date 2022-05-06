@@ -24,7 +24,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let movieSearchViewModel = MovieSearchViewModel()
         movieSearchViewController.setViewModel(movieSearchViewModel)
         tabBarController.setViewControllers([movieSearchViewController], animated: false)
-        tabBarController.selectedIndex = 0
 
         let navigationController = UINavigationController(rootViewController: tabBarController)
         window?.rootViewController = navigationController

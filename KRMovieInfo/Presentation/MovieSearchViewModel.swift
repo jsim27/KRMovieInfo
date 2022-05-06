@@ -6,17 +6,28 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
 class MovieSearchViewModel: ViewModelProtocol {
 
-    struct Input {
+    private let useCase = MovieListUsecase(movieListRepository: DefaultMovieListRepository())
 
+    struct Input {
+        let viewWillAppear: Observable<Void>
     }
     struct Output {
-
+        let itemFetched: Driver<[MovieListItem]>
     }
 
     func transform(input: Input) -> Output {
-        return Output()
+
+        let itemFetched = input.viewWillAppear
+            .flatMap {
+                self.useCase.fetchMovieList(title: "")
+            }
+            .asDriver(onErrorJustReturn: [])
+
+        return Output(itemFetched: itemFetched)
     }
 }
