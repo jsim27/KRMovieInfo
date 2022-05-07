@@ -17,8 +17,8 @@ class MovieSearchViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         return collectionView
     }()
-    private var datasource: UICollectionViewDiffableDataSource<MovieListSection, MovieListItem>?
-    private var snapshot = NSDiffableDataSourceSnapshot<MovieListSection, MovieListItem>()
+    private var datasource: UICollectionViewDiffableDataSource<MovieListSection, MovieListItemWithImage>?
+    private var snapshot = NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithImage>()
     private var disposeBag = DisposeBag()
 
     override func viewDidLoad() {
@@ -46,7 +46,7 @@ extension MovieSearchViewController {
             .transform(input: input)
         output?.itemFetched
             .drive(onNext: {
-                var snapshot = NSDiffableDataSourceSnapshot<MovieListSection, MovieListItem>()
+                var snapshot = NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithImage>()
                 snapshot.appendSections([.main])
                 snapshot.appendItems($0, toSection: .main)
                 self.snapshot = snapshot
@@ -90,7 +90,7 @@ extension MovieSearchViewController {
     }
 
     private func configureCollectionviewDiffableDatasource() {
-        self.datasource = UICollectionViewDiffableDataSource<MovieListSection, MovieListItem>(
+        self.datasource = UICollectionViewDiffableDataSource<MovieListSection, MovieListItemWithImage>(
             collectionView: self.collectionView,
             cellProvider: { collectionView, indexPath, itemIdentifier in
                 guard let cell = collectionView.dequeueReusableCell(
@@ -98,7 +98,12 @@ extension MovieSearchViewController {
                     for: indexPath
                 ) as? MovieListItemCell else { fatalError() }
 
-                cell.setContent(with: itemIdentifier)
+                DispatchQueue.main.async {
+                    if indexPath == self.collectionView.indexPath(for: cell) {
+                        cell.setContent(with: itemIdentifier.movieInfo)
+                        cell.setImageData(with: itemIdentifier.imageData)
+                    }
+                }
 
                 return cell
             }

@@ -75,11 +75,11 @@ class MovieListItemCell: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
-        self.disposeBag = nil
-        self.disposeBag = DisposeBag()
+        super.prepareForReuse()
+        self.thumbnailImageView.image = UIImage(systemName: "list.and.film")
     }
 
-    func setContent(with movieListItem: MovieListItem, imageData: Observable<Data>) {
+    func setContent(with movieListItem: MovieListItem) {
         self.titleLabel.text = movieListItem.title
         self.productionYearAndMovieTypeLabel.text = [
             movieListItem.productionYear,
@@ -91,9 +91,18 @@ class MovieListItemCell: UICollectionViewCell {
         ].joined(separator: " • ")
         self.directorLabel.text = movieListItem.directors.joined(separator: ", ")
 
+    }
+
+    func setImageData(with imageData: Observable<Data?>) {
         imageData
-            .map { UIImage(data: $0) }
-            .bind(to: self.thumbnailImageView.rx.image)
+            .map {
+                guard let data = $0 else { return UIImage(systemName: "list.and.film") }
+                return UIImage(data: data)
+            }
+            .debug()
+            .asDriver(onErrorJustReturn: UIImage(systemName: "plus"))
+            .drive((self.thumbnailImageView.rx.image))
+
             .disposed(by: self.disposeBag)
     }
 
@@ -125,7 +134,7 @@ class MovieListItemCell: UICollectionViewCell {
 
         self.thumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            self.thumbnailImageView.widthAnchor.constraint(equalToConstant: self.frame.height * 0.8)
+            self.thumbnailImageView.widthAnchor.constraint(equalToConstant: self.frame.height * 0.75)
         ])
     }
 }
