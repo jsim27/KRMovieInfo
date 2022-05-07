@@ -35,7 +35,7 @@ private extension MovieListResponse {
             return MovieListItem(
                 title: $0.title,
                 titleEn: $0.titleEn,
-                prductionYear: $0.prductionYear,
+                productionYear: $0.prductionYear,
                 openDate: $0.openDate,
                 movieType: $0.movieType,
                 productionState: $0.productionState,

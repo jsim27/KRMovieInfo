@@ -6,29 +6,62 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class MovieListItemCell: UICollectionViewCell {
 
     static let reuseId = "MovieListItemCell"
 
     private let viewModel = MovieSearchViewModel()
+    private var disposeBag: DisposeBag! = DisposeBag()
+
+    let hStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.spacing = 10
+
+        return stackView
+    }()
+    let vStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+
+        return stackView
+    }()
 
     private let thumbnailImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "circle"))
-
+        let imageView = UIImageView(image: UIImage(systemName: "list.and.film"))
+        imageView.tintColor = .systemGray
         return imageView
     }()
 
-    let stackView = UIStackView()
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .headline)
+        label.numberOfLines = 0
+        return label
+    }()
+
+    private let productionYearAndMovieTypeLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .subheadline)
+        label.textColor = .systemGray
+        label.numberOfLines = 1
+        return label
+    }()
+
+    private let genreAndNationLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .title3)
+        label.textColor = .systemGray
+        label.numberOfLines = 1
         return label
     }()
 
     private let directorLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .subheadline)
+        label.numberOfLines = 1
         return label
     }()
 
@@ -41,33 +74,58 @@ class MovieListItemCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setContent(with movieListItem: MovieListItem) {
+    override func prepareForReuse() {
+        self.disposeBag = nil
+        self.disposeBag = DisposeBag()
+    }
+
+    func setContent(with movieListItem: MovieListItem, imageData: Observable<Data>) {
         self.titleLabel.text = movieListItem.title
+        self.productionYearAndMovieTypeLabel.text = [
+            movieListItem.productionYear,
+            movieListItem.movieType
+        ].joined(separator: " • ")
+        self.genreAndNationLabel.text = [
+            movieListItem.representingGenre,
+            movieListItem.representingNation
+        ].joined(separator: " • ")
         self.directorLabel.text = movieListItem.directors.joined(separator: ", ")
+
+        imageData
+            .map { UIImage(data: $0) }
+            .bind(to: self.thumbnailImageView.rx.image)
+            .disposed(by: self.disposeBag)
     }
 
     private func configure() {
-
+        self.configureContentView()
         self.configureHeirarchy()
         self.configureConstraint()
-        self.configureContentView()
     }
     private func configureContentView() {
-        self.contentView.layer.borderWidth = 0.1
+        self.contentView.layer.borderWidth = 0.2
         self.contentView.layer.borderColor = UIColor.systemGray.cgColor
     }
     private func configureHeirarchy() {
-        self.addSubview(self.stackView)
-        self.stackView.addArrangedSubview(self.titleLabel)
-        self.stackView.addArrangedSubview(self.directorLabel)
+        self.contentView.addSubview(self.hStackView)
+        self.hStackView.addArrangedSubview(self.thumbnailImageView)
+        self.vStackView.addArrangedSubview(self.titleLabel)
+        self.vStackView.addArrangedSubview(self.productionYearAndMovieTypeLabel)
+        self.vStackView.addArrangedSubview(self.directorLabel)
+        self.hStackView.addArrangedSubview(self.vStackView)
     }
     private func configureConstraint() {
-        self.stackView.translatesAutoresizingMaskIntoConstraints = false
+        self.hStackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            self.stackView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            self.stackView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            self.stackView.topAnchor.constraint(equalTo: self.topAnchor),
-            self.stackView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+            self.hStackView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
+            self.hStackView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
+            self.hStackView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 10),
+            self.hStackView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
+        ])
+
+        self.thumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.thumbnailImageView.widthAnchor.constraint(equalToConstant: self.frame.height * 0.8)
         ])
     }
 }
