@@ -12,10 +12,31 @@ struct MovieListRequest: APIRequest, MovieAPIInfoOwner {
     typealias Response = MovieListResponse
 
     var method: HTTPMethod = .GET
-    let query: [String: String]
+    var query: [String: String]
+    var header: [String: String]?
+    var urlComponents: URLComponents? {
+        var urlComponents = URLComponents(string: self.base)
+        urlComponents?.percentEncodedQueryItems = self.query.map {
+            URLQueryItem(
+                name: $0.key,
+                value: $0.value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+            )
+        }
+        urlComponents?.queryItems?.append(URLQueryItem(name: "key", value: self.apiKey))
+        return urlComponents
+    }
+
+    init(title: String?, director: String?, page: Int = 1, itemsPerPage: Int = 10) {
+        self.query =  [
+            "curPage": "\(page)",
+            "itemPerPage": "\(itemsPerPage)"
+        ]
+        if title != nil { self.query.updateValue(title ?? "", forKey: "movieNm") }
+        if director != nil { self.query.updateValue(director ?? "", forKey: "directorNm") }
+    }
 }
 
-protocol MovieAPIInfoOwner: APIRequest {
+protocol MovieAPIInfoOwner {
 
     var base: String { get }
     var apiKey: String { get }

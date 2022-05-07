@@ -24,7 +24,7 @@ class MovieSearchViewModel: ViewModelProtocol {
 
         let itemFetched = input.viewWillAppear
             .flatMap {
-                self.useCase.fetchMovieList(title: "")
+                self.useCase.fetchMovieList(title: "", page: 1, itemsPerPage: 100)
             }
             .asDriver(onErrorJustReturn: [])
 

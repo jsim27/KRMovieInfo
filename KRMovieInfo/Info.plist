@@ -4,6 +4,10 @@
 <dict>
 	<key>KOFIC_API_KEY1</key>
 	<string>b66533c829f90728a06c7e151f07ce1b</string>
+	<key>NAVER_API_KEY</key>
+	<string>TfjY2dSVq2x2KDlfHqLP</string>
+	<key>NAVER_API_SECRET</key>
+	<string>FsQnhI2nPu</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

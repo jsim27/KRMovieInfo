@@ -10,7 +10,7 @@ import RxSwift
 
 final class URLSessionService {
 
-    let session = URLSession.shared
+    private let session = URLSession.shared
 
     func execute<T: APIRequest>(
         request: T,

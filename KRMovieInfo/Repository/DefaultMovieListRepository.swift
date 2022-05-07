@@ -12,18 +12,16 @@ class DefaultMovieListRepository: MovieListRepository {
 
     let service = URLSessionService()
 
-    func fetchMovieList(title: String) -> Observable<[MovieListItem]> {
-        let request = MovieListRequest(query: ["movieNm": title])
+    func fetchMovieList(title: String, page: Int, itemsPerPage: Int) -> Observable<[MovieListItem]> {
+        let request = MovieListRequest(title: title, director: nil, page: page, itemsPerPage: itemsPerPage)
         let response = service.execute(request: request)
 
         return response.map { $0.toDomain() }
     }
 
-    func fetchMovieList(director: String) -> Observable<[MovieListItem]> {
+    func fetchMovieList(director: String, page: Int, itemsPerPage: Int) -> Observable<[MovieListItem]> {
 
-        let request = MovieListRequest(
-            query: ["directorNm": director]
-        )
+        let request = MovieListRequest(title: nil, director: director, page: page, itemsPerPage: itemsPerPage)
         let response = service.execute(request: request)
 
         return response.map { $0.toDomain() }

@@ -12,23 +12,16 @@ protocol APIRequest {
     associatedtype Response: APIResponse
 
     var base: String { get }
-    var apiKey: String { get }
     var method: HTTPMethod { get }
-    var query: [String: String] { get }
+    var header: [String: String]? { get }
+    var urlComponents: URLComponents? { get }
 }
 
 extension APIRequest {
 
     var url: URL? {
-        var urlComponents = URLComponents(string: self.base)
-        urlComponents?.percentEncodedQueryItems = self.query.map {
-            URLQueryItem(
-                name: $0.key,
-                value: $0.value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-            )
-        }
-        urlComponents?.percentEncodedQueryItems?.append(URLQueryItem(name: "key", value: self.apiKey))
-        return urlComponents?.url
+
+        return self.urlComponents?.url
     }
 
     var urlRequest: URLRequest? {
@@ -38,6 +31,7 @@ extension APIRequest {
 
         var request = URLRequest(url: url)
         request.httpMethod = self.method.rawValue
+        self.header?.forEach { request.addValue($1, forHTTPHeaderField: $0) }
 
         return request
     }

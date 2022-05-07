@@ -10,7 +10,7 @@ import RxSwift
 
 protocol MovieListRepository {
 
-    func fetchMovieList(title: String) -> Observable<[MovieListItem]>
+    func fetchMovieList(title: String, page: Int, itemsPerPage: Int) -> Observable<[MovieListItem]>
 
-    func fetchMovieList(director: String) -> Observable<[MovieListItem]>
+    func fetchMovieList(director: String, page: Int, itemsPerPage: Int) -> Observable<[MovieListItem]>
 }
