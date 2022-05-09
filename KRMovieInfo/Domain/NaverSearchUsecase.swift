@@ -20,7 +20,7 @@ class NaverSearchUsecase {
         query: String,
         procudtionYearFrom: Int,
         productionYearTo: Int
-    ) -> Observable<NaverSearchResult?> {
+    ) -> Observable<[NaverSearchResult]> {
         return self.repository.fetchNaverSearchResult(
             query: query,
             procudtionYearFrom: procudtionYearFrom,

@@ -16,5 +16,5 @@ protocol NaverSearchRepository {
         productionYearTo: Int,
         page: Int,
         itemsPerPage: Int
-    ) -> Observable<NaverSearchResult?>
+    ) -> Observable<[NaverSearchResult]>
 }

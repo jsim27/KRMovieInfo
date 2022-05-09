@@ -9,7 +9,6 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-var num: Int = 0
 class MovieSearchViewModel: ViewModelProtocol {
 
     private let movieSearchUseCase = MovieListUsecase(movieListRepository: DefaultMovieListRepository())
@@ -26,10 +25,13 @@ class MovieSearchViewModel: ViewModelProtocol {
 
         let itemFetched: Driver<[MovieListItemWithImage]> = input.viewWillAppear
             .flatMap {
-                self.movieSearchUseCase.fetchMovieList(title: "", page: 1, itemsPerPage: 100)
+                self.movieSearchUseCase.fetchMovieList(director: "박찬욱", page: 1, itemsPerPage: 100)
             }
             .map { items in
-                items.map { item in
+                items.filter { item in
+                    !item.genreAll.contains("성인물(에로)")
+                }
+                .map { item in
                     let naverSearchResult = self.imageSearchUseCase.fetchNaverSearchResult(
                         query: item.title,
                         procudtionYearFrom: Int(item.productionYear) ?? 0,
@@ -41,8 +43,11 @@ class MovieSearchViewModel: ViewModelProtocol {
                             }
                         }
                     let imageData = naverSearchResult
-                        .map { (item) -> Data? in
-                            guard let urlString = item?.image else { return nil }
+                        .map { (result) -> Data? in
+                            let naverResult = result.count == 1 ? result : result.filter {
+                                return item.directors.contains($0.director.trimmingCharacters(in: ["|"]))
+                            }
+                            guard let urlString = naverResult.first?.image else { return nil }
                             guard let url = URL(string: urlString) else { return nil }
 
                             return try? Data(contentsOf: url)

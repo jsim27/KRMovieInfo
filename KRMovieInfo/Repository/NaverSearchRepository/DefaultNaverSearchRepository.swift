@@ -19,7 +19,7 @@ class DefaultNaverSearchRepository: NaverSearchRepository {
         productionYearTo: Int,
         page: Int,
         itemsPerPage: Int
-    ) -> Observable<NaverSearchResult?> {
+    ) -> Observable<[NaverSearchResult]> {
         let request = NaverSearchRequest(
             query: query,
             procudtionYearFrom: procudtionYearFrom,
@@ -34,17 +34,18 @@ class DefaultNaverSearchRepository: NaverSearchRepository {
 
 private extension NaverSearchResponse {
 
-    func toDomain() -> NaverSearchResult? {
-        guard let first = self.items.first else { return nil }
-        return NaverSearchResult(
-            title: first.title,
-            link: first.link,
-            image: first.image,
-            subtitle: first.subtitle,
-            pubDate: first.pubDate,
-            director: first.director,
-            actor: first.actor,
-            userRating: first.userRating
-        )
+    func toDomain() -> [NaverSearchResult] {
+        return self.items.map { item in
+            NaverSearchResult(
+                title: item.title,
+                link: item.link,
+                image: item.image,
+                subtitle: item.subtitle,
+                pubDate: item.pubDate,
+                director: item.director,
+                actor: item.actor,
+                userRating: item.userRating
+            )
+        }
     }
 }
