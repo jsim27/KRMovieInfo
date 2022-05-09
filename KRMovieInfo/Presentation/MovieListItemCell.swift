@@ -14,7 +14,7 @@ class MovieListItemCell: UICollectionViewCell {
     static let reuseId = "MovieListItemCell"
 
     private let viewModel = MovieSearchViewModel()
-    private var disposeBag: DisposeBag! = DisposeBag()
+    var disposeBag: DisposeBag! = DisposeBag()
 
     let hStackView: UIStackView = {
         let stackView = UIStackView()
@@ -25,6 +25,8 @@ class MovieListItemCell: UICollectionViewCell {
     let vStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
+        stackView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0)
+        stackView.isLayoutMarginsRelativeArrangement = true
 
         return stackView
     }()
@@ -99,7 +101,6 @@ class MovieListItemCell: UICollectionViewCell {
                 guard let data = $0 else { return UIImage(systemName: "list.and.film") }
                 return UIImage(data: data)
             }
-            .debug()
             .asDriver(onErrorJustReturn: UIImage(systemName: "plus"))
             .drive((self.thumbnailImageView.rx.image))
 
@@ -128,13 +129,13 @@ class MovieListItemCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             self.hStackView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
             self.hStackView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
-            self.hStackView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 10),
-            self.hStackView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -10)
+            self.hStackView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 0),
+            self.hStackView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: 0)
         ])
 
         self.thumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            self.thumbnailImageView.widthAnchor.constraint(equalToConstant: self.frame.height * 0.75)
+            self.thumbnailImageView.widthAnchor.constraint(equalToConstant: self.frame.height * 0.7)
         ])
     }
 }
