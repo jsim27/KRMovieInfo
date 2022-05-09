@@ -29,10 +29,10 @@ class MovieSearchViewModel: ViewModelProtocol {
             }
             .map { items in
                 items.filter { item in
-                    !item.genreAll.contains("성인물(에로)")
+                    !item.genreAll.contains("에로")
                 }
                 .map { item in
-                    let naverSearchResult = self.imageSearchUseCase.fetchNaverSearchResult(
+                    let imageData = self.imageSearchUseCase.fetchNaverSearchResult(
                         query: item.title,
                         procudtionYearFrom: Int(item.productionYear) ?? 0,
                         productionYearTo: (Int(item.openDate.prefix(4)) ?? 3000)
@@ -42,7 +42,6 @@ class MovieSearchViewModel: ViewModelProtocol {
                                 return Observable<Int>.timer(.milliseconds(100), scheduler: MainScheduler.instance)
                             }
                         }
-                    let imageData = naverSearchResult
                         .map { (result) -> Data? in
                             let naverResult = result.count == 1 ? result : result.filter {
                                 return item.directors.contains($0.director.trimmingCharacters(in: ["|"]))

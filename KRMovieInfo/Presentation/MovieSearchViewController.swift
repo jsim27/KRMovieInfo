@@ -19,6 +19,8 @@ class MovieSearchViewController: UIViewController {
     }()
     private var datasource: UICollectionViewDiffableDataSource<MovieListSection, MovieListItemWithImage>?
     private var snapshot = NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithImage>()
+    private let searchResultController = UIViewController()
+    private lazy var searchController = UISearchController(searchResultsController: self.searchResultController)
     private var disposeBag = DisposeBag()
 
     override func viewDidLoad() {
@@ -60,6 +62,7 @@ extension MovieSearchViewController {
         configureHeirarchicy()
         configureConstraint()
         configureCollectionView()
+        configureSearchController()
     }
 
     private func configureView() {
@@ -108,6 +111,13 @@ extension MovieSearchViewController {
                 return cell
             }
         )
+    }
+
+    private func configureSearchController() {
+        self.searchController.searchBar.scopeButtonTitles = [
+            "영화명", "감독명"
+        ]
+        self.tabBarController?.navigationItem.searchController = self.searchController
     }
 }
 
