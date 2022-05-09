@@ -8,14 +8,26 @@
 import Foundation
 import RxSwift
 
-class DefaultNsverSearchRepository: NaverSearchRepository {
+class DefaultNaverSearchRepository: NaverSearchRepository {
 
     let service = URLSessionService()
+    var num: Int = 0
 
-    func fetchNaverSearchResult(query: String, procudtionYearFrom: Int, productionYearTo: Int, page: Int, itemsPerPage: Int) -> Observable<NaverSearchResult?> {
-        let request = NaverSearchRequest(query: query, procudtionYearFrom: procudtionYearFrom, productionYearTo: productionYearTo, page: page, itemsPerPage: itemsPerPage)
+    func fetchNaverSearchResult(
+        query: String,
+        procudtionYearFrom: Int,
+        productionYearTo: Int,
+        page: Int,
+        itemsPerPage: Int
+    ) -> Observable<NaverSearchResult?> {
+        let request = NaverSearchRequest(
+            query: query,
+            procudtionYearFrom: procudtionYearFrom,
+            productionYearTo: productionYearTo,
+            page: page,
+            itemsPerPage: itemsPerPage
+        )
         let response = service.execute(request: request)
-        
         return response.map { $0.toDomain() }
     }
 }

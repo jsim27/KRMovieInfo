@@ -111,6 +111,14 @@ extension MovieSearchViewController {
     }
 }
 
+extension MovieSearchViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let cell = cell as? MovieListItemCell else { fatalError() }
+
+        cell.disposeBag = DisposeBag()
+    }
+}
+
 extension MovieSearchViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,

@@ -16,7 +16,17 @@ class NaverSearchUsecase {
         self.repository = naverSearchRepository
     }
 
-    func fetchNaverSearchResult(query: String, procudtionYearFrom: Int, productionYearTo: Int) -> Observable<NaverSearchResult?> {
-        return self.repository.fetchNaverSearchResult(query: query, procudtionYearFrom: procudtionYearFrom, productionYearTo: productionYearTo, page: 1, itemsPerPage: 10)
+    func fetchNaverSearchResult(
+        query: String,
+        procudtionYearFrom: Int,
+        productionYearTo: Int
+    ) -> Observable<NaverSearchResult?> {
+        return self.repository.fetchNaverSearchResult(
+            query: query,
+            procudtionYearFrom: procudtionYearFrom,
+            productionYearTo: productionYearTo,
+            page: 1,
+            itemsPerPage: 10
+        )
     }
 }

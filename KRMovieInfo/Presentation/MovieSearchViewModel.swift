@@ -9,10 +9,11 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+var num: Int = 0
 class MovieSearchViewModel: ViewModelProtocol {
 
     private let movieSearchUseCase = MovieListUsecase(movieListRepository: DefaultMovieListRepository())
-    private let imageSearchUseCase = NaverSearchUsecase(naverSearchRepository: DefaultNsverSearchRepository())
+    private let imageSearchUseCase = NaverSearchUsecase(naverSearchRepository: DefaultNaverSearchRepository())
 
     struct Input {
         let viewWillAppear: Observable<Void>
@@ -32,8 +33,13 @@ class MovieSearchViewModel: ViewModelProtocol {
                     let naverSearchResult = self.imageSearchUseCase.fetchNaverSearchResult(
                         query: item.title,
                         procudtionYearFrom: Int(item.productionYear) ?? 0,
-                        productionYearTo: Int(item.productionYear) ?? 3000
+                        productionYearTo: (Int(item.openDate.prefix(4)) ?? 3000)
                     )
+                        .retry { error in
+                            error.flatMap { _ in
+                                return Observable<Int>.timer(.milliseconds(100), scheduler: MainScheduler.instance)
+                            }
+                        }
                     let imageData = naverSearchResult
                         .map { (item) -> Data? in
                             guard let urlString = item?.image else { return nil }
