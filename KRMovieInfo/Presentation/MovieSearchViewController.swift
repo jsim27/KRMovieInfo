@@ -42,21 +42,28 @@ extension MovieSearchViewController {
     private func binding() {
         let viewWillAppear = self.rx.methodInvoked(#selector(UIViewController.viewWillAppear))
             .map { _ in }
-        let searchBarDidChange = self.searchController.searchBar.rx.text.asObservable()
+
+        let searchBarDidChange = self.searchController.searchBar.rx.text
+            .asObservable()
             .compactMap { $0 }
             .distinctUntilChanged()
-        let searchBarScopeIndex = self.searchController.searchBar.rx.selectedScopeButtonIndex.asObservable()
+
+        let searchBarScopeIndex = self.searchController.searchBar.rx.selectedScopeButtonIndex
+            .asObservable()
 
         let input = MovieSearchViewModel.Input(
             viewWillAppear: viewWillAppear,
             searchBarDidChange: searchBarDidChange,
             searchBarScopeIndex: searchBarScopeIndex
         )
+
         let output = self.movieSearchViewModel?
             .transform(input: input)
+
         output?.itemFetched
             .drive(onNext: {
-                var snapshot = NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithAsyncImage>()
+                var snapshot =
+                NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithAsyncImage>()
                 snapshot.appendSections([.main])
                 snapshot.appendItems($0, toSection: .main)
                 self.snapshot = snapshot
@@ -129,7 +136,11 @@ extension MovieSearchViewController {
 }
 
 extension MovieSearchViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didEndDisplaying cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
         guard let cell = cell as? MovieListItemCell else { fatalError() }
 
         cell.disposeBag = DisposeBag()
