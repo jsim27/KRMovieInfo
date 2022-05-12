@@ -42,7 +42,7 @@ private extension NaverSearchResponse {
                 image: item.image,
                 subtitle: item.subtitle,
                 pubDate: item.pubDate,
-                director: item.director,
+                director: item.director.trimmingCharacters(in: ["|"]),
                 actor: item.actor,
                 userRating: item.userRating
             )

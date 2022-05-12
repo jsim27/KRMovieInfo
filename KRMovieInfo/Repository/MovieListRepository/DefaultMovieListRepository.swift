@@ -20,7 +20,6 @@ class DefaultMovieListRepository: MovieListRepository {
     }
 
     func fetchMovieList(director: String, page: Int, itemsPerPage: Int) -> Observable<[MovieListItem]> {
-
         let request = MovieListRequest(title: nil, director: director, page: page, itemsPerPage: itemsPerPage)
         let response = service.execute(request: request)
 

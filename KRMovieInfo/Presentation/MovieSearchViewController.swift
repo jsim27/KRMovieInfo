@@ -17,8 +17,8 @@ class MovieSearchViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         return collectionView
     }()
-    private var datasource: UICollectionViewDiffableDataSource<MovieListSection, MovieListItemWithImage>?
-    private var snapshot = NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithImage>()
+    private var datasource: UICollectionViewDiffableDataSource<MovieListSection, MovieListItemWithAsyncImage>?
+    private var snapshot = NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithAsyncImage>()
     private let searchResultController = UIViewController()
     private lazy var searchController = UISearchController(searchResultsController: self.searchResultController)
     private var disposeBag = DisposeBag()
@@ -40,15 +40,23 @@ extension MovieSearchViewController {
 extension MovieSearchViewController {
 
     private func binding() {
+        let viewWillAppear = self.rx.methodInvoked(#selector(UIViewController.viewWillAppear))
+            .map { _ in }
+        let searchBarDidChange = self.searchController.searchBar.rx.text.asObservable()
+            .compactMap { $0 }
+            .distinctUntilChanged()
+        let searchBarScopeIndex = self.searchController.searchBar.rx.selectedScopeButtonIndex.asObservable()
+
         let input = MovieSearchViewModel.Input(
-            viewWillAppear: self.rx.methodInvoked(#selector(UIViewController.viewWillAppear))
-                .map { _ in }
+            viewWillAppear: viewWillAppear,
+            searchBarDidChange: searchBarDidChange,
+            searchBarScopeIndex: searchBarScopeIndex
         )
         let output = self.movieSearchViewModel?
             .transform(input: input)
         output?.itemFetched
             .drive(onNext: {
-                var snapshot = NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithImage>()
+                var snapshot = NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithAsyncImage>()
                 snapshot.appendSections([.main])
                 snapshot.appendItems($0, toSection: .main)
                 self.snapshot = snapshot
@@ -93,7 +101,7 @@ extension MovieSearchViewController {
     }
 
     private func configureCollectionviewDiffableDatasource() {
-        self.datasource = UICollectionViewDiffableDataSource<MovieListSection, MovieListItemWithImage>(
+        self.datasource = UICollectionViewDiffableDataSource<MovieListSection, MovieListItemWithAsyncImage>(
             collectionView: self.collectionView,
             cellProvider: { collectionView, indexPath, itemIdentifier in
                 guard let cell = collectionView.dequeueReusableCell(
@@ -107,7 +115,6 @@ extension MovieSearchViewController {
                         cell.setImageData(with: itemIdentifier.imageData)
                     }
                 }
-
                 return cell
             }
         )

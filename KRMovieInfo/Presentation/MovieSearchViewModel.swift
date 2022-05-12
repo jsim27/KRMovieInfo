@@ -11,64 +11,36 @@ import RxCocoa
 
 class MovieSearchViewModel: ViewModelProtocol {
 
-    private let movieSearchUseCase = MovieListUsecase(movieListRepository: DefaultMovieListRepository())
-    private let imageSearchUseCase = NaverSearchUsecase(naverSearchRepository: DefaultNaverSearchRepository())
+    private let movieSearchUseCase = MovieListUsecase(
+        movieListRepository: DefaultMovieListRepository(),
+        naverSearchRepository: DefaultNaverSearchRepository()
+    )
 
     struct Input {
         let viewWillAppear: Observable<Void>
+        let searchBarDidChange: Observable<String>
+        let searchBarScopeIndex: Observable<Int>
     }
     struct Output {
-        let itemFetched: Driver<[MovieListItemWithImage]>
+        let itemFetched: Driver<[MovieListItemWithAsyncImage]>
     }
 
     func transform(input: Input) -> Output {
 
-        let itemFetched: Driver<[MovieListItemWithImage]> = input.viewWillAppear
-            .flatMap {
-                self.movieSearchUseCase.fetchMovieList(director: "박찬욱", page: 1, itemsPerPage: 100)
-            }
-            .map { items in
-                items.filter { item in
-                    !item.genreAll.contains("에로")
-                }
-                .map { item in
-                    let imageData = self.imageSearchUseCase.fetchNaverSearchResult(
-                        query: item.title,
-                        procudtionYearFrom: Int(item.productionYear) ?? 0,
-                        productionYearTo: (Int(item.openDate.prefix(4)) ?? 3000)
-                    )
-                        .retry { error in
-                            error.flatMap { _ in
-                                return Observable<Int>.timer(.milliseconds(100), scheduler: MainScheduler.instance)
-                            }
-                        }
-                        .map { (result) -> Data? in
-                            let naverResult = result.count == 1 ? result : result.filter {
-                                return item.directors.contains($0.director.trimmingCharacters(in: ["|"]))
-                            }
-                            guard let urlString = naverResult.first?.image else { return nil }
-                            guard let url = URL(string: urlString) else { return nil }
+        let queryEvent = Observable.merge(
+            input.viewWillAppear.map { "" },
+            input.searchBarDidChange
+        )
 
-                            return try? Data(contentsOf: url)
-                        }
-                    return MovieListItemWithImage(movieInfo: item, imageData: imageData)
+        let itemFetched = Observable.combineLatest(queryEvent, input.searchBarScopeIndex)
+            .flatMap { queryEvent, queryType -> Observable<[MovieListItemWithAsyncImage]> in
+                if queryType == 0 {
+                    return self.movieSearchUseCase.fetchMovieList(title: queryEvent, page: 1, itemsPerPage: 100)
                 }
+                return self.movieSearchUseCase.fetchMovieList(director: queryEvent, page: 1, itemsPerPage: 100)
             }
             .asDriver(onErrorJustReturn: [])
 
         return Output(itemFetched: itemFetched)
     }
-}
-
-struct MovieListItemWithImage: Hashable {
-    static func == (lhs: MovieListItemWithImage, rhs: MovieListItemWithImage) -> Bool {
-        lhs.id == rhs.id
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    var id = UUID()
-    var movieInfo: MovieListItem
-    var imageData: Observable<Data?>
 }
