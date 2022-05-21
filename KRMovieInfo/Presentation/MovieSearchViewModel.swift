@@ -26,14 +26,9 @@ class MovieSearchViewModel: ViewModelProtocol {
     }
 
     func transform(input: Input) -> Output {
-
-        let queryEvent = Observable.merge(
-            input.viewWillAppear.map { "" },
-            input.searchBarDidChange
-        )
-
+        let queryEvent = input.viewWillAppear.withLatestFrom(input.searchBarDidChange)
         let itemFetched = Observable.combineLatest(queryEvent, input.searchBarScopeIndex)
-            .flatMap { queryEvent, queryType -> Observable<[MovieListItemWithAsyncImage]> in
+            .flatMapLatest { queryEvent, queryType -> Observable<[MovieListItemWithAsyncImage]> in
                 if queryType == 0 {
                     return self.movieSearchUseCase.fetchMovieList(title: queryEvent, page: 1, itemsPerPage: 100)
                 }

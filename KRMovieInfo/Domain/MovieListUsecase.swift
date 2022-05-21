@@ -40,7 +40,7 @@ class MovieListUsecase {
             procudtionYearFrom: Int(movieInfo.productionYear) ?? 0,
             productionYearTo: Int(movieInfo.openDate.prefix(4)) ?? 3000,
             page: 1,
-            itemsPerPage: 10
+            itemsPerPage: 5
         )
     }
 
