@@ -6,28 +6,26 @@
 //
 
 import UIKit
+import RxSwift
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    let bag = DisposeBag()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 
-        // AppCoordinator 로직
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         self.window = UIWindow(windowScene: windowScene)
+        guard let window = self.window else {
+            return
+        }
+        let appFlowCoordinator = AppFlowCoordinator(window: window)
 
-        let tabBarController = MainTabBarController()
-        let movieSearchViewController = MovieSearchViewController()
-        let movieSearchViewModel = MovieSearchViewModel()
-        movieSearchViewController.setViewModel(movieSearchViewModel)
-        tabBarController.setViewControllers([movieSearchViewController], animated: false)
-
-        let navigationController = UINavigationController(rootViewController: tabBarController)
-        window?.rootViewController = navigationController
-        window?.makeKeyAndVisible()
+        appFlowCoordinator.start()
+            .subscribe()
+            .disposed(by: self.bag)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -11,10 +11,13 @@ import RxCocoa
 
 class MovieSearchViewModel: ViewModelProtocol {
 
-    private let movieSearchUseCase = MovieListUsecase(
-        movieListRepository: DefaultMovieListRepository(),
-        naverSearchRepository: DefaultNaverSearchRepository()
-    )
+    private let coordinator: SceneCoordinator
+    private let movieSearchUseCase: MovieListUsecase
+
+    init(coordinator: SceneCoordinator, useCase: MovieListUsecase) {
+        self.coordinator = coordinator
+        self.movieSearchUseCase = useCase
+    }
 
     struct Input {
         let viewWillAppear: Observable<Void>

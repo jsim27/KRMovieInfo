@@ -13,7 +13,6 @@ class MovieListItemCell: UICollectionViewCell {
 
     static let reuseId = "MovieListItemCell"
 
-    private let viewModel = MovieSearchViewModel()
     var disposeBag: DisposeBag! = DisposeBag()
 
     let hStackView: UIStackView = {
