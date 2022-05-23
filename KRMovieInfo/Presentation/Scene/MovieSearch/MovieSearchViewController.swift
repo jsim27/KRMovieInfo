@@ -12,15 +12,14 @@ import RxCocoa
 class MovieSearchViewController: UIViewController {
 
     private var movieSearchViewModel: MovieSearchViewModel?
-    private lazy var collectionView: UICollectionView = {
+    private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         return collectionView
     }()
     private var datasource: UICollectionViewDiffableDataSource<MovieListSection, MovieListItemWithAsyncImage>?
     private var snapshot = NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithAsyncImage>()
-    private let searchResultController = UIViewController()
-    private lazy var searchController = UISearchController(searchResultsController: self.searchResultController)
+    private let searchController = UISearchController()
     private var disposeBag = DisposeBag()
 
     override func viewDidLoad() {
@@ -108,7 +107,8 @@ extension MovieSearchViewController {
     }
 
     private func configureCollectionviewDiffableDatasource() {
-        self.datasource = UICollectionViewDiffableDataSource<MovieListSection, MovieListItemWithAsyncImage>(
+        self.datasource =
+        UICollectionViewDiffableDataSource<MovieListSection, MovieListItemWithAsyncImage>(
             collectionView: self.collectionView,
             cellProvider: { collectionView, indexPath, itemIdentifier in
                 guard let cell = collectionView.dequeueReusableCell(
@@ -119,9 +119,23 @@ extension MovieSearchViewController {
                 DispatchQueue.main.async {
                     if indexPath == self.collectionView.indexPath(for: cell) {
                         cell.setContent(with: itemIdentifier.movieInfo)
-                        cell.setImageData(with: itemIdentifier.imageData)
                     }
                 }
+
+                itemIdentifier.imageData
+                    .map {
+                        guard let data = $0 else {
+                            return UIImage(systemName: "questionmark.square")
+                        }
+                        return UIImage(data: data)
+                    }
+                    .asDriver(onErrorJustReturn: UIImage(systemName: "exclamationmark.circle.fill"))
+                    .filter({ _ in
+                        indexPath == self.collectionView.indexPath(for: cell)
+                    })
+                    .drive(cell.rx.thumbnailImage)
+                    .disposed(by: self.disposeBag)
+                
                 return cell
             }
         )

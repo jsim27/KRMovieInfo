@@ -21,6 +21,7 @@ class MovieListItemCell: UICollectionViewCell {
 
         return stackView
     }()
+
     let vStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -30,9 +31,11 @@ class MovieListItemCell: UICollectionViewCell {
         return stackView
     }()
 
-    private let thumbnailImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(systemName: "list.and.film"))
+    fileprivate let thumbnailImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "film"))
         imageView.tintColor = .systemGray
+        imageView.backgroundColor = .systemGray6
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
@@ -77,7 +80,9 @@ class MovieListItemCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.thumbnailImageView.image = UIImage(systemName: "list.and.film")
+        self.disposeBag = DisposeBag()
+        self.thumbnailImageView.image =
+        UIImage(systemName: "film")
     }
 
     func setContent(with movieListItem: MovieListItem) {
@@ -92,18 +97,6 @@ class MovieListItemCell: UICollectionViewCell {
         ].joined(separator: " • ")
         self.directorLabel.text = movieListItem.directors.joined(separator: ", ")
 
-    }
-
-    func setImageData(with imageData: Observable<Data?>) {
-        imageData
-            .map {
-                guard let data = $0 else { return UIImage(systemName: "list.and.film") }
-                return UIImage(data: data)
-            }
-            .asDriver(onErrorJustReturn: UIImage(systemName: "plus"))
-            .drive((self.thumbnailImageView.rx.image))
-
-            .disposed(by: self.disposeBag)
     }
 
     private func configure() {
@@ -136,5 +129,13 @@ class MovieListItemCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             self.thumbnailImageView.widthAnchor.constraint(equalToConstant: self.frame.height * 0.7)
         ])
+    }
+}
+
+extension Reactive where Base: MovieListItemCell {
+    var thumbnailImage: Binder<UIImage?> {
+        return Binder(self.base, scheduler: MainScheduler.asyncInstance) { cell, image in
+            cell.thumbnailImageView.image = image
+        }
     }
 }
