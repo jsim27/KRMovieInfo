@@ -70,14 +70,22 @@ private extension MovieListUsecase {
 
     func fetchImage(from result: [NaverSearchResult]) -> Observable<Data?> {
         return Observable.create { emitter in
-            DispatchQueue.global().async {
+            let task = DispatchWorkItem {
                 guard let urlString = result.first?.image,
                       let url = URL(string: urlString) else {
+                    emitter.onNext(nil) // TODO: onError로 변경
+                    emitter.onCompleted()
                     return
                 }
                 emitter.onNext(try? Data(contentsOf: url))
+                emitter.onCompleted()
             }
-            return Disposables.create()
+
+            DispatchQueue.global().async(execute: task)
+
+            return Disposables.create {
+                task.cancel()
+            }
         }
     }
 }
