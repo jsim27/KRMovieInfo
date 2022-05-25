@@ -8,11 +8,12 @@
 import Foundation
 import RxSwift
 
-extension URLSessionService {
+extension URLSessionService: ReactiveCompatible { }
 
+extension Reactive where Base: URLSessionService {
     func execute<T: APIRequest>(request: T) -> Observable<T.Response> {
         return Observable.create { emitter in
-            let task = self.execute(request: request) { result in
+            let task = base.execute(request: request) { result in
                 switch result {
                 case .success(let result):
                     emitter.onNext(result)
