@@ -59,7 +59,7 @@ extension MovieSearchViewController {
         let output = self.movieSearchViewModel?
             .transform(input: input)
 
-        output?.itemFetched
+        output?.itemFetched.debug()
             .drive(onNext: {
                 var snapshot =
                 NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithAsyncImage>()
@@ -135,7 +135,7 @@ extension MovieSearchViewController {
                     })
                     .drive(cell.rx.thumbnailImage)
                     .disposed(by: self.disposeBag)
-                
+
                 return cell
             }
         )

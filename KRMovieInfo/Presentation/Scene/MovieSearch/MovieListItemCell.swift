@@ -35,7 +35,8 @@ class MovieListItemCell: UICollectionViewCell {
         let imageView = UIImageView(image: UIImage(systemName: "film"))
         imageView.tintColor = .systemGray
         imageView.backgroundColor = .systemGray6
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         return imageView
     }()
 

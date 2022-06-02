@@ -27,7 +27,7 @@ class DefaultNaverSearchRepository: NaverSearchRepository {
             page: page,
             itemsPerPage: itemsPerPage
         )
-        let response = service.rx.execute(request: request)
+        let response = service.rx.execute(request: request, isCacheNeeded: true)
         return response.map { $0.toDomain() }
     }
 }

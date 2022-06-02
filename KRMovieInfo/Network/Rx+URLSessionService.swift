@@ -12,9 +12,12 @@ extension URLSessionService: ReactiveCompatible { }
 
 extension Reactive where Base: URLSessionService {
 
-    func execute<T: APIRequest>(request: T) -> Observable<T.Response> {
+    func execute<T: APIRequest>(request: T, isCacheNeeded: Bool) -> Observable<T.Response> {
         return Observable.create { emitter in
-            let task = base.execute(request: request) { result in
+            let task = base.execute(
+                request: request,
+                isCacheNeeded: isCacheNeeded
+            ) { result in
                 switch result {
                 case .success(let result):
                     emitter.onNext(result)
