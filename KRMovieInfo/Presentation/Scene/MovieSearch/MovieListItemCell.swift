@@ -82,8 +82,7 @@ class MovieListItemCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         self.disposeBag = DisposeBag()
-        self.thumbnailImageView.image =
-        UIImage(systemName: "film")
+        self.thumbnailImageView.image = UIImage(systemName: "film")
     }
 
     func setContent(with movieListItem: MovieListItem) {

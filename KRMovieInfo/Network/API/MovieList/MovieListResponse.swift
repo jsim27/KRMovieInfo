@@ -27,6 +27,7 @@ struct MovieListResult: Decodable {
 // MARK: - MovieList
 struct MovieInfo: Decodable {
 
+    let movieCode: String
     let title, titleEn, prductionYear: String
     let openDate: String
     let movieType: String
@@ -36,6 +37,7 @@ struct MovieInfo: Decodable {
     let companys: [Company]
 
     private enum CodingKeys: String, CodingKey {
+        case movieCode = "movieCd"
         case title = "movieNm"
         case titleEn = "movieNmEn"
         case prductionYear = "prdtYear"
