@@ -9,6 +9,7 @@ import Foundation
 
 struct MovieListItem: Hashable {
 
+    let code: String
     let title, titleEn, productionYear: String
     let openDate: String
     let movieType: String

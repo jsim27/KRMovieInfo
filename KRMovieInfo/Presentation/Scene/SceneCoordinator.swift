@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 
 class SceneCoordinator: Coordinator<Void> {
+    
     let identifier = UUID()
     let navigationController: UINavigationController
     let tabBarController = UITabBarController()
@@ -18,19 +19,21 @@ class SceneCoordinator: Coordinator<Void> {
     }
 
     override func start() -> Observable<Void> {
-        Observable.create { _ in
-            let movieSearchViewController = MovieSearchViewController()
-            let movieSearchViewModel = MovieSearchViewModel(
-                coordinator: self,
-                useCase: MovieListUsecase(
-                    movieListRepository: DefaultMovieListRepository(),
-                    naverSearchRepository: DefaultNaverSearchRepository()
-                )
+        self.navigationController.setViewControllers([self.tabBarController], animated: true)
+        return self.coordinateToMovieSearch()
+            .withUnretained(self)
+            .do(onNext: { coordinator, _ in
+                coordinator.navigationController.setViewControllers([], animated: true)
+            })
+            .map { _ in }
+    }
+
+    func coordinateToMovieSearch() -> Observable<Void> {
+        return self.coordinate(
+            to: MovieSearchCoordinator(
+                navigationController: self.navigationController,
+                tabBarController: self.tabBarController
             )
-            movieSearchViewController.setViewModel(movieSearchViewModel)
-            self.tabBarController.setViewControllers([movieSearchViewController], animated: true)
-            self.navigationController.setViewControllers([self.tabBarController], animated: true)
-            return Disposables.create()
-        }
+        )
     }
 }

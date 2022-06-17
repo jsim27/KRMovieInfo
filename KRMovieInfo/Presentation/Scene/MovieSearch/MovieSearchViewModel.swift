@@ -11,10 +11,10 @@ import RxCocoa
 
 class MovieSearchViewModel: ViewModelProtocol {
 
-    private let coordinator: SceneCoordinator
-    private let movieSearchUseCase: MovieListUsecase
+    private let coordinator: MovieSearchCoordinator
+    private let movieSearchUseCase: MovieListUseCase
 
-    init(coordinator: SceneCoordinator, useCase: MovieListUsecase) {
+    init(coordinator: MovieSearchCoordinator, useCase: MovieListUseCase) {
         self.coordinator = coordinator
         self.movieSearchUseCase = useCase
     }
@@ -23,9 +23,11 @@ class MovieSearchViewModel: ViewModelProtocol {
         let viewWillAppear: Observable<Void>
         let searchBarDidChange: Observable<String>
         let searchBarScopeIndex: Observable<Int>
+        let collectionViewDidSelectItem: Observable<MovieListItemWithAsyncImage>
     }
     struct Output {
         let itemFetched: Driver<[MovieListItemWithAsyncImage]>
+        let itemSelected: Driver<Void>
     }
 
     func transform(input: Input) -> Output {
@@ -43,8 +45,17 @@ class MovieSearchViewModel: ViewModelProtocol {
                 }
                 return self.movieSearchUseCase.fetchMovieList(director: queryEvent, page: 1, itemsPerPage: 100)
             }
+            .debug()
             .asDriver(onErrorJustReturn: [])
 
-        return Output(itemFetched: itemFetched)
+        let itemSelected = input.collectionViewDidSelectItem
+            .map { $0.movieInfo.code }
+            .flatMap(self.coordinator.coordinateToMovieDetail(movieCode:))
+            .asDriver(onErrorJustReturn: ())
+
+        return Output(
+            itemFetched: itemFetched,
+            itemSelected: itemSelected
+        )
     }
 }

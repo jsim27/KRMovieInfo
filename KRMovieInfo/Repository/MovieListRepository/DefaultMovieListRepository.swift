@@ -32,6 +32,7 @@ private extension MovieListResponse {
     func toDomain() -> [MovieListItem] {
         return self.movieListResult.movieList.map {
             return MovieListItem(
+                code: $0.movieCode,
                 title: $0.title,
                 titleEn: $0.titleEn,
                 productionYear: $0.prductionYear,

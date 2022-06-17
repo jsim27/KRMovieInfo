@@ -1,15 +1,15 @@
 //
-//  MovielistRequest.swift
+//  MovieDetailRequest.swift
 //  KRMovieInfo
 //
-//  Created by Jae-hoon Sim on 2022/05/01.
+//  Created by Jae-hoon Sim on 2022/06/16.
 //
 
 import Foundation
 
-struct MovieListRequest: APIRequest, MovieAPIInfoOwner {
+struct MovieDetailRequest: APIRequest, MovieAPIInfoOwner {
 
-    typealias Response = MovieListResponse
+    typealias Response = MovieDetailResponse
 
     var method: HTTPMethod = .GET
     var query: [String: String]
@@ -26,12 +26,8 @@ struct MovieListRequest: APIRequest, MovieAPIInfoOwner {
         return urlComponents
     }
 
-    init(title: String?, director: String?, page: Int = 1, itemsPerPage: Int = 10) {
-        self.query =  [
-            "curPage": "\(page)",
-            "itemPerPage": "\(itemsPerPage)"
-        ]
-        if title != nil { self.query.updateValue(title ?? "", forKey: "movieNm") }
-        if director != nil { self.query.updateValue(director ?? "", forKey: "directorNm") }
+    init(code: String) {
+        self.query = [:]
+        self.query.updateValue(code, forKey: "movieCd")
     }
 }

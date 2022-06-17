@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-class MovieListUsecase {
+class MovieListUseCase {
 
     let movieListRepository: MovieListRepository
     let naverSearchRepository: NaverSearchRepository
@@ -46,7 +46,7 @@ class MovieListUsecase {
 
 }
 
-private extension MovieListUsecase {
+private extension MovieListUseCase {
     func filterAdultItems(items: [MovieListItem]) -> [MovieListItem] {
         return items.filter { $0.genreAll.contains("에로") == false }
     }

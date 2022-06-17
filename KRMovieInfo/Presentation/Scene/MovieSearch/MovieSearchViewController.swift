@@ -50,16 +50,25 @@ extension MovieSearchViewController {
         let searchBarScopeIndex = self.searchController.searchBar.rx.selectedScopeButtonIndex
             .asObservable()
 
+        let didSelectItem = self.collectionView.rx.itemSelected
+            .withUnretained(self)
+            .compactMap { viewController, indexPath -> MovieListItemWithAsyncImage? in
+                guard let datasource = viewController.datasource else { return nil }
+                return datasource.itemIdentifier(for: indexPath)
+            }
+            .asObservable()
+
         let input = MovieSearchViewModel.Input(
             viewWillAppear: viewWillAppear,
             searchBarDidChange: searchBarDidChange,
-            searchBarScopeIndex: searchBarScopeIndex
+            searchBarScopeIndex: searchBarScopeIndex,
+            collectionViewDidSelectItem: didSelectItem
         )
 
         let output = self.movieSearchViewModel?
             .transform(input: input)
 
-        output?.itemFetched.debug()
+        output?.itemFetched
             .drive(onNext: {
                 var snapshot =
                 NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithAsyncImage>()
@@ -68,6 +77,10 @@ extension MovieSearchViewController {
                 self.snapshot = snapshot
                 self.datasource?.apply(self.snapshot)
             })
+            .disposed(by: self.disposeBag)
+
+        output?.itemSelected
+            .drive()
             .disposed(by: self.disposeBag)
     }
 
@@ -150,6 +163,7 @@ extension MovieSearchViewController {
 }
 
 extension MovieSearchViewController: UICollectionViewDelegate {
+
     func collectionView(
         _ collectionView: UICollectionView,
         didEndDisplaying cell: UICollectionViewCell,
@@ -162,6 +176,7 @@ extension MovieSearchViewController: UICollectionViewDelegate {
 }
 
 extension MovieSearchViewController: UICollectionViewDelegateFlowLayout {
+
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
