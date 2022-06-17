@@ -16,4 +16,7 @@ class MovieDetailUseCase {
         self.movieDetailRepository = movieDetailRepository
     }
 
+    func fetchMovieDetail(code: String) -> Observable<MovieDetailEntity> {
+        return self.movieDetailRepository.fetchMovieDetail(code: code)
+    }
 }
