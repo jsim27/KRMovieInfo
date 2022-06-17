@@ -10,5 +10,5 @@ import RxSwift
 
 protocol MovieDetailRepository {
 
-    func fetchMovieDetail(code: String) 
+    func fetchMovieDetail(code: String) -> Observable<MovieDetailEntity>
 }
