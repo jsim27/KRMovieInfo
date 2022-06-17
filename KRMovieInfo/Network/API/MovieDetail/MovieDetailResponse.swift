@@ -9,16 +9,16 @@ import Foundation
 
 struct MovieDetailResponse: APIResponse, Decodable {
 
-    let movieInfoResult: MovieDetailResult
+    let movieDetailResult: MovieDetailResult
 }
 
-// MARK: - MovieInfoResult
+// MARK: - MovieDetailResult
 struct MovieDetailResult: Decodable {
     
     let movieInfo: MovieDetail
 }
 
-// MARK: - MovieInfo
+// MARK: - MovieDetail
 struct MovieDetail: Decodable {
     let movieCode, title, titleEn, titleOriginal: String
     let showTime, prductionYear, openDate, productionState: String
