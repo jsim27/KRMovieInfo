@@ -20,7 +20,7 @@ struct NaverSearchRequest: APIRequest, NaverSearchInfoOwner {
         ]
     }
     var urlComponents: URLComponents? {
-        var urlComponents = URLComponents(string: self.base)
+        var urlComponents = URLComponents(string: self.base + self.path)
         urlComponents?.percentEncodedQueryItems = self.query.map {
             URLQueryItem(
                 name: $0.key,
@@ -39,20 +39,4 @@ struct NaverSearchRequest: APIRequest, NaverSearchInfoOwner {
             "yearto": productionYearTo
         ]
     }
-}
-
-protocol NaverSearchInfoOwner: APIRequest {
-
-    var base: String { get }
-    var apiKey: String { get }
-    var apiSecret: String { get }
-}
-
-extension NaverSearchInfoOwner {
-
-    var base: String {
-        return "https://openapi.naver.com/v1/search/movie.json"
-    }
-    var apiKey: String { Bundle.main.naverSearchAPIKey }
-    var apiSecret: String { Bundle.main.naverSearchAPISecret }
 }

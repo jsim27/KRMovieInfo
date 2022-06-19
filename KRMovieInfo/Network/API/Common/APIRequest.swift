@@ -12,6 +12,7 @@ protocol APIRequest {
     associatedtype Response: APIResponse
 
     var base: String { get }
+    var path: String { get }
     var method: HTTPMethod { get }
     var header: [String: String]? { get }
     var urlComponents: URLComponents? { get }

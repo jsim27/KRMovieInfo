@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MovieDetailRequest: APIRequest, MovieAPIInfoOwner {
+struct MovieDetailRequest: APIRequest, MovieDetailAPIInfoOwner {
 
     typealias Response = MovieDetailResponse
 
@@ -15,7 +15,7 @@ struct MovieDetailRequest: APIRequest, MovieAPIInfoOwner {
     var query: [String: String]
     var header: [String: String]?
     var urlComponents: URLComponents? {
-        var urlComponents = URLComponents(string: self.base)
+        var urlComponents = URLComponents(string: self.base + self.path)
         urlComponents?.percentEncodedQueryItems = self.query.map {
             URLQueryItem(
                 name: $0.key,

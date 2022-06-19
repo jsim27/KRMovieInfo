@@ -16,7 +16,7 @@ protocol MovieAPIInfoOwner {
 extension MovieAPIInfoOwner {
 
     var base: String {
-        return "https://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/searchMovieList.json"
+        return "https://www.kobis.or.kr/kobisopenapi/webservice/rest/movie/"
     }
     var apiKey: String { Bundle.main.koficMainAPIKey }
 }
