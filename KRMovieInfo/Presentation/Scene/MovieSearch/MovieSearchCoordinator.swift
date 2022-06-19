@@ -40,7 +40,8 @@ class MovieSearchCoordinator: Coordinator<Void> {
     func coordinateToMovieDetail(movieCode: String) -> Observable<Void> {
         return self.coordinate(
             to: DetailViewCoordinator(
-                navigationController: self.navigationController
+                navigationController: self.navigationController,
+                movieCode: movieCode
             )
         )
     }

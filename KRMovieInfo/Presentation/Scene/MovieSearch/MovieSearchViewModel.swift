@@ -45,7 +45,6 @@ class MovieSearchViewModel: ViewModelProtocol {
                 }
                 return self.movieSearchUseCase.fetchMovieList(director: queryEvent, page: 1, itemsPerPage: 100)
             }
-            .debug()
             .asDriver(onErrorJustReturn: [])
 
         let itemSelected = input.collectionViewDidSelectItem

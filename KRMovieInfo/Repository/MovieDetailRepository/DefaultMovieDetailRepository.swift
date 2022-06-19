@@ -22,7 +22,7 @@ class DefaultMovieDetailRepository: MovieDetailRepository {
 }
 
 extension MovieDetailResponse {
-    
+
     func toDomain() -> MovieDetailEntity {
         let movieDetail = self.movieDetailResult.movieInfo
         return MovieDetailEntity(
@@ -45,13 +45,13 @@ extension MovieDetailResponse {
                 .map { $0.name }
                 .joined(separator: ", "),
             actors: movieDetail.actors
-                .joined(separator: ", "),
-            companys: movieDetail.companys
-                .map { $0.companyName }
+                .map { $0.peopleNm }
                 .joined(separator: ", "),
             audits: movieDetail.audits
+                .map { $0.watchGrade }
                 .joined(separator: ", "),
             staffs: movieDetail.staffs
+                .map { $0.peopleNm }
                 .joined(separator: ", ")
         )
     }

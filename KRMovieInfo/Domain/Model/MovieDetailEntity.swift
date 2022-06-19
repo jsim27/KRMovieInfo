@@ -8,7 +8,7 @@
 import Foundation
 
 struct MovieDetailEntity: Decodable {
-    
+
     let movieCode, title, titleEn, titleOriginal: String
     let showTime, prductionYear, openDate, productionState: String
     let movieType: String
@@ -16,6 +16,5 @@ struct MovieDetailEntity: Decodable {
     let genres: String
     let directors: String
     let actors: String
-    let companys: String
     let audits, staffs: String
 }

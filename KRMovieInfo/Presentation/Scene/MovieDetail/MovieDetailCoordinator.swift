@@ -13,9 +13,11 @@ class DetailViewCoordinator: Coordinator<Void> {
     let identifier = UUID()
     let navigationController: UINavigationController
     let dismissAction = PublishSubject<Void>()
+    let movieCode: String
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, movieCode: String) {
         self.navigationController = navigationController
+        self.movieCode = movieCode
     }
 
     override func start() -> Observable<Void> {
@@ -24,7 +26,8 @@ class DetailViewCoordinator: Coordinator<Void> {
             coordinator: self,
             useCase: MovieDetailUseCase(
                 movieDetailRepository: DefaultMovieDetailRepository()
-            )
+            ),
+            movieCode: self.movieCode
         )
         detailViewController.setViewModel(detailViewModel)
         self.navigationController.pushViewController(detailViewController, animated: true)
