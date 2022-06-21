@@ -19,7 +19,8 @@ class MovieSearchViewController: UIViewController {
     }()
     private var datasource: UICollectionViewDiffableDataSource<MovieListSection, MovieListItemWithAsyncImage>?
     private var snapshot = NSDiffableDataSourceSnapshot<MovieListSection, MovieListItemWithAsyncImage>()
-    private let searchController = UISearchController()
+    private let searchBar = UISearchBar()
+    private let cancelButton = UIButton()
     private var disposeBag = DisposeBag()
 
     override func viewDidLoad() {
@@ -42,12 +43,12 @@ extension MovieSearchViewController {
         let viewWillAppear = self.rx.methodInvoked(#selector(UIViewController.viewWillAppear))
             .map { _ in }
 
-        let searchBarDidChange = self.searchController.searchBar.rx.text
+        let searchBarDidChange = self.searchBar.rx.text
             .asObservable()
             .compactMap { $0 }
             .distinctUntilChanged()
 
-        let searchBarScopeIndex = self.searchController.searchBar.rx.selectedScopeButtonIndex
+        let searchBarScopeIndex = self.searchBar.rx.selectedScopeButtonIndex
             .asObservable()
 
         let didSelectItem = self.collectionView.rx.itemSelected
@@ -89,13 +90,12 @@ extension MovieSearchViewController {
         configureHeirarchicy()
         configureConstraint()
         configureCollectionView()
-        configureSearchController()
+        configureBarButtonItems()
     }
 
     private func configureView() {
         self.view.backgroundColor = .white
         self.title = "영화 검색"
-        self.tabBarController?.title = "영화 검색"
     }
 
     private func configureHeirarchicy() {
@@ -154,11 +154,38 @@ extension MovieSearchViewController {
         )
     }
 
-    private func configureSearchController() {
-        self.searchController.searchBar.scopeButtonTitles = [
+    private func configureBarButtonItems() {
+        self.configureSearchBar()
+        self.tabBarController?.navigationItem.titleView = self.searchBar
+    }
+
+    private func configureSearchBar() {
+        self.searchBar.searchTextField.font = .preferredFont(forTextStyle: .body)
+        self.searchBar.placeholder = "영화명, 감독명을 검색해보세요."
+
+        UIBarButtonItem
+            .appearance(whenContainedInInstancesOf: [UISearchBar.self])
+            .title = "취소"
+        UIBarButtonItem
+            .appearance(whenContainedInInstancesOf: [UISearchBar.self])
+            .setTitleTextAttributes([.foregroundColor: UIColor.systemRed], for: .normal)
+
+        self.searchBar.scopeButtonTitles = [
             "영화명", "감독명"
         ]
-        self.tabBarController?.navigationItem.searchController = self.searchController
+
+        self.searchBar.rx.textDidBeginEditing
+            .subscribe(onNext: { _ in
+                self.searchBar.setShowsScope(true, animated: true)
+                self.searchBar.setShowsCancelButton(true, animated: true)
+            })
+            .disposed(by: self.disposeBag)
+        self.searchBar.rx.textDidEndEditing
+            .subscribe(onNext: {
+                self.searchBar.setShowsScope(false, animated: true)
+                self.searchBar.setShowsCancelButton(false, animated: true)
+            })
+            .disposed(by: self.disposeBag)
     }
 }
 
