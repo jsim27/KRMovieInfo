@@ -25,7 +25,8 @@ class DetailViewCoordinator: Coordinator<Void> {
         let detailViewModel = MovieDetailViewModel(
             coordinator: self,
             useCase: MovieDetailUseCase(
-                movieDetailRepository: DefaultMovieDetailRepository()
+                movieDetailRepository: DefaultMovieDetailRepository(),
+                naverSearchRepository: DefaultNaverSearchRepository()
             ),
             movieCode: self.movieCode
         )

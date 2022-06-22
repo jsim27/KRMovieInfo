@@ -25,16 +25,30 @@ class MovieDetailViewModel: ViewModelProtocol {
         let viewWillAppear: Observable<Void>
     }
     struct Output {
-        let navigationTitle: Observable<String>
+        let moviePoster: Observable<Data>
+        let movieTitle: Observable<String>
+        let movieInfo: Observable<String>
     }
 
     func transform(input: Input) -> Output {
-        let navigationTitle = input.viewWillAppear
+        let fetchMovieInfo = input.viewWillAppear
             .flatMap { _ in
                 self.movieDetailUseCase.fetchMovieDetail(code: self.movieCode)
             }
+            .share()
+//        let moviePoster = fetchMovieInfo
+//            .map { $0.title }
+        let movieTitle = fetchMovieInfo
             .map { $0.title }
 
-        return Output(navigationTitle: navigationTitle)
+        let movieInfo = fetchMovieInfo
+            .map { [$0.prductionYear, $0.productionState, $0.genres].joined(separator: " • ")}
+
+
+        return Output(
+            moviePoster: Observable.of(Data()),
+            movieTitle: movieTitle,
+            movieInfo: movieInfo
+        )
     }
 }
