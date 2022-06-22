@@ -34,19 +34,10 @@ class MovieListUseCase {
             }
     }
 
-    private func fetchNaverSearchResult(movieInfo: MovieListItem) -> Observable<[NaverSearchResult]> {
-        return self.naverSearchRepository.fetchNaverSearchResult(
-            query: movieInfo.title,
-            procudtionYearFrom: Int(movieInfo.productionYear) ?? 0,
-            productionYearTo: Int(movieInfo.openDate.prefix(4)) ?? 3000,
-            page: 1,
-            itemsPerPage: 5
-        )
-    }
-
 }
 
 private extension MovieListUseCase {
+
     func filterAdultItems(items: [MovieListItem]) -> [MovieListItem] {
         return items.filter { $0.genreAll.contains("에로") == false }
     }
@@ -66,6 +57,16 @@ private extension MovieListUseCase {
                 }
             }
         return MovieListItemWithAsyncImage(movieInfo: item, imageData: imageData)
+    }
+
+    func fetchNaverSearchResult(movieInfo: MovieListItem) -> Observable<[NaverSearchResult]> {
+        return self.naverSearchRepository.fetchNaverSearchResult(
+            query: movieInfo.title,
+            procudtionYearFrom: Int(movieInfo.productionYear) ?? 0,
+            productionYearTo: Int(movieInfo.openDate.prefix(4)) ?? 3000,
+            page: 1,
+            itemsPerPage: 5
+        )
     }
 
     func fetchImage(from result: [NaverSearchResult]) -> Observable<Data?> {

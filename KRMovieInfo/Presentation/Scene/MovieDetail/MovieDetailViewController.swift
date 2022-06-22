@@ -15,7 +15,8 @@ class MovieDetailViewController: UIViewController {
 
     private let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
-
+        imageView.contentMode = .scaleAspectFill
+        imageView.alpha = 0.5
         return imageView
     }()
     private let containerScrollView: UIScrollView = {
@@ -32,7 +33,10 @@ class MovieDetailViewController: UIViewController {
     private let titleStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.spacing = 5
+        stackView.spacing = 15
+
+        stackView.layoutMargins = .init(top: 0, left: 10, bottom: 0, right: 0)
+        stackView.isLayoutMarginsRelativeArrangement = true
 
         return stackView
     }()
@@ -48,17 +52,18 @@ class MovieDetailViewController: UIViewController {
 
     private let titlePosterImageView: UIImageView = {
         let imageView = UIImageView()
-
+        imageView.layer.cornerRadius = 7
+        imageView.clipsToBounds = true
         return imageView
     }()
     private let titleMovieNameLabel: UILabel = {
         let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .largeTitle)
+        label.font = .preferredFont(forTextStyle: .title1)
         return label
     }()
     private let titleMovieInfoLabel: UILabel = {
         let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .footnote)
+        label.font = .preferredFont(forTextStyle: .body)
         label.textColor = .placeholderText
         return label
     }()
@@ -82,7 +87,12 @@ private extension MovieDetailViewController {
         let input = MovieDetailViewModel.Input(viewWillAppear: viewWillAppear)
 
         let output = self.viewModel?.transform(input: input)
-        
+
+        output?.moviePoster
+            .map(UIImage.init(data:))
+            .bind(to: self.titlePosterImageView.rx.image, self.backgroundImageView.rx.image)
+            .disposed(by: self.disposeBag)
+
         output?.movieTitle
             .bind(to: self.titleMovieNameLabel.rx.text)
             .disposed(by: self.disposeBag)
@@ -107,6 +117,7 @@ private extension MovieDetailViewController {
     }
 
     func configureHierarchy() {
+        self.view.addSubview(self.backgroundImageView)
         self.view.addSubview(self.containerScrollView)
         self.containerScrollView.addSubview(self.containerStackView)
         self.containerStackView.addArrangedSubview(self.titleStackView)
@@ -123,9 +134,17 @@ private extension MovieDetailViewController {
     }
 
     func configureConstraint() {
+        self.backgroundImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.backgroundImageView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.backgroundImageView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+            self.backgroundImageView.widthAnchor.constraint(equalTo: self.view.widthAnchor)
+//            self.backgroundImageView.heightAnchor.constraint(equalToConstant: 180)
+        ])
+
         self.containerScrollView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            self.containerScrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.containerScrollView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 30),
             self.containerScrollView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             self.containerScrollView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
             self.containerScrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
@@ -153,8 +172,8 @@ private extension MovieDetailViewController {
 
         self.titlePosterImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            self.titlePosterImageView.widthAnchor.constraint(equalToConstant: 100),
-            self.titlePosterImageView.heightAnchor.constraint(equalToConstant: 180)
+            self.titlePosterImageView.widthAnchor.constraint(equalToConstant: 67),
+            self.titlePosterImageView.heightAnchor.constraint(equalToConstant: 100)
         ])
     }
 

@@ -36,17 +36,18 @@ class MovieDetailViewModel: ViewModelProtocol {
                 self.movieDetailUseCase.fetchMovieDetail(code: self.movieCode)
             }
             .share()
-//        let moviePoster = fetchMovieInfo
-//            .map { $0.title }
+
+        let moviePoster = fetchMovieInfo
+            .flatMap(self.movieDetailUseCase.fetchPosterData(movieInfo:))
+
         let movieTitle = fetchMovieInfo
             .map { $0.title }
 
         let movieInfo = fetchMovieInfo
             .map { [$0.prductionYear, $0.productionState, $0.genres].joined(separator: " • ")}
 
-
         return Output(
-            moviePoster: Observable.of(Data()),
+            moviePoster: moviePoster,
             movieTitle: movieTitle,
             movieInfo: movieInfo
         )

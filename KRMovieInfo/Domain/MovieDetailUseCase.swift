@@ -22,13 +22,47 @@ class MovieDetailUseCase {
         return self.movieDetailRepository.fetchMovieDetail(code: code)
     }
 
-    private func fetchNaverSearchResult(movieInfo: MovieListItem) -> Observable<[NaverSearchResult]> {
+    func fetchPosterData(movieInfo: MovieDetailEntity) -> Observable<Data> {
+        self.fetchNaverSearchResult(movieInfo: movieInfo)
+            .map { (result) -> [NaverSearchResult] in
+                guard result.count != 1 else { return result }
+                return result.filter {
+                    movieInfo.directors.contains($0.director)
+                }
+            }
+            .flatMap(self.fetchImage)
+            .compactMap { $0 }
+    }
+
+    private func fetchNaverSearchResult(movieInfo: MovieDetailEntity) -> Observable<[NaverSearchResult]> {
         return self.naverSearchRepository.fetchNaverSearchResult(
             query: movieInfo.title,
-            procudtionYearFrom: Int(movieInfo.productionYear) ?? 0,
+            procudtionYearFrom: Int(movieInfo.prductionYear) ?? 0,
             productionYearTo: Int(movieInfo.openDate.prefix(4)) ?? 3000,
             page: 1,
             itemsPerPage: 5
         )
+    }
+
+
+    func fetchImage(from result: [NaverSearchResult]) -> Observable<Data?> {
+        return Observable.create { emitter in
+            let task = DispatchWorkItem {
+                guard let urlString = result.first?.image,
+                      let url = URL(string: urlString) else {
+                    emitter.onNext(nil) // TODO: onError로 변경
+                    emitter.onCompleted()
+                    return
+                }
+                emitter.onNext(try? Data(contentsOf: url))
+                emitter.onCompleted()
+            }
+
+            DispatchQueue.global().async(execute: task)
+
+            return Disposables.create {
+                task.cancel()
+            }
+        }
     }
 }
