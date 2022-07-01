@@ -22,16 +22,15 @@ class MovieDetailUseCase {
         return self.movieDetailRepository.fetchMovieDetail(code: code)
     }
 
-    func fetchPosterData(movieInfo: MovieDetailEntity) -> Observable<Data> {
-        self.fetchNaverSearchResult(movieInfo: movieInfo)
+    func fetchNaverMovieInfo(movieInfo: MovieDetailEntity) -> Observable<NaverSearchResult> {
+        return self.fetchNaverSearchResult(movieInfo: movieInfo)
             .map { (result) -> [NaverSearchResult] in
                 guard result.count != 1 else { return result }
                 return result.filter {
                     movieInfo.directors.contains($0.director)
                 }
             }
-            .flatMap(self.fetchImage)
-            .compactMap { $0 }
+            .compactMap{ $0.first }
     }
 
     private func fetchNaverSearchResult(movieInfo: MovieDetailEntity) -> Observable<[NaverSearchResult]> {
@@ -44,17 +43,15 @@ class MovieDetailUseCase {
         )
     }
 
-
-    func fetchImage(from result: [NaverSearchResult]) -> Observable<Data?> {
+    func fetchImage(from result: NaverSearchResult) -> Observable<Data> {
         return Observable.create { emitter in
             let task = DispatchWorkItem {
-                guard let urlString = result.first?.image,
-                      let url = URL(string: urlString) else {
-                    emitter.onNext(nil) // TODO: onError로 변경
-                    emitter.onCompleted()
+                let urlString = result.image
+                guard let url = URL(string: urlString),
+                      let posterData = try? Data(contentsOf: url) else {
                     return
                 }
-                emitter.onNext(try? Data(contentsOf: url))
+                emitter.onNext(posterData)
                 emitter.onCompleted()
             }
 

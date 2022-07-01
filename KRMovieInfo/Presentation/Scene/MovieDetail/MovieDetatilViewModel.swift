@@ -28,6 +28,7 @@ class MovieDetailViewModel: ViewModelProtocol {
         let moviePoster: Observable<Data>
         let movieTitle: Observable<String>
         let movieInfo: Observable<String>
+        let userRating: Observable<String>
     }
 
     func transform(input: Input) -> Output {
@@ -37,8 +38,9 @@ class MovieDetailViewModel: ViewModelProtocol {
             }
             .share()
 
-        let moviePoster = fetchMovieInfo
-            .flatMap(self.movieDetailUseCase.fetchPosterData(movieInfo:))
+        let naverMovieInfo = fetchMovieInfo
+            .flatMap(self.movieDetailUseCase.fetchNaverMovieInfo)
+            .share()
 
         let movieTitle = fetchMovieInfo
             .map { $0.title }
@@ -46,10 +48,17 @@ class MovieDetailViewModel: ViewModelProtocol {
         let movieInfo = fetchMovieInfo
             .map { [$0.prductionYear, $0.productionState, $0.genres].joined(separator: " • ")}
 
+        let userRating = naverMovieInfo
+            .map { $0.userRating }
+
+        let posterData = naverMovieInfo
+            .flatMap(self.movieDetailUseCase.fetchImage(from:))
+
         return Output(
-            moviePoster: moviePoster,
+            moviePoster: posterData,
             movieTitle: movieTitle,
-            movieInfo: movieInfo
+            movieInfo: movieInfo,
+            userRating: userRating
         )
     }
 }
